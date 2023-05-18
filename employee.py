@@ -91,7 +91,7 @@ class employeeClass:
 
         #===button===
         btn_add = Button(self.root, text="Сохранить", command=self.add, bg="#2196f3", fg= "white", cursor="hand2").place(x=500, y=305, width=90, height=28)
-        btn_update = Button(self.root, text="Обновить", bg="#4caf50", fg= "white", cursor="hand2").place(x=610, y=305, width=90, height=28)
+        btn_update = Button(self.root, text="Обновить", command=self.update, bg="#4caf50", fg= "white", cursor="hand2").place(x=610, y=305, width=90, height=28)
         btn_delete = Button(self.root, text="Удалить все", bg="#f44336", fg= "white", cursor="hand2").place(x=720, y=305, width=90, height=28)
         btn_clear = Button(self.root, text="Очистить", bg="#607d8b", fg= "white", cursor="hand2").place(x=830, y=305, width=90, height=28)
 
@@ -124,18 +124,20 @@ class employeeClass:
 
         self.EmployeeTable["show"] = "headings"
 
-        self.EmployeeTable.column("ID", width=15)
-        self.EmployeeTable.column("Пол", width=15)
+        self.EmployeeTable.column("ID", width=50)
+        self.EmployeeTable.column("Пол", width=50)
         self.EmployeeTable.column("Телефон", width=100)
         self.EmployeeTable.column("ФИО", width=250)
         self.EmployeeTable.column("Отдел", width=200)
         self.EmployeeTable.column("Должность", width=150)
         self.EmployeeTable.column("Email", width=150)
         self.EmployeeTable.column("Пароль", width=150)
+        self.EmployeeTable.column("Тип пользователя", width=100)
         self.EmployeeTable.column("Адрес", width=300)
         self.EmployeeTable.column("Зп", width=130)
 
         self.EmployeeTable.pack(fill=BOTH, expand=1)
+        self.EmployeeTable.bind("<ButtonRelease-1>", self.get_data)
         self.show()
 
 #==========================================================
@@ -187,6 +189,61 @@ class employeeClass:
             self.EmployeeTable.delete(*self.EmployeeTable.get_children())
             for row in rows:
                 self.EmployeeTable.insert('',END,values=row)
+        except Exception as ex:
+            messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
+
+    def get_data(self,ev):
+        f= self.EmployeeTable.focus()
+        content=(self.EmployeeTable.item(f))
+        row=content['values']
+        #print(row)
+        self.var_emp_id.set(row[0])
+        self.var_gender.set(row[1])
+        self.var_contact.set(row[2])
+        self.var_name.set(row[3])
+
+        self.var_dob.set(row[4])
+        self.var_doj.set(row[5])
+
+        self.var_email.set(row[6])
+        self.var_pass.set(row[7])
+        self.var_utype.set(row[8])
+        self.txt_address.delete('1.0', END)
+        self.txt_address.insert(END, row[9])
+        self.var_salary.set(row[10])
+
+    def update(self):
+        con = sqlite3.connect(database=r"diplom_project.db")
+        cur = con.cursor()
+        try:
+            if self.var_emp_id.get() == "":
+                messagebox.showerror("Error", "ID сотрудника должно быть заполнено", parent=self.root)
+            else:
+                cur.execute("SELECT * FROM employee WHERE ID=?", (self.var_emp_id.get(),))
+                row=cur.fetchone()
+                if row == None:
+                    messagebox.showerror("Error", "Неккоректный ID", parent=self.root)
+                else:
+                    #cur.execute("Insert into employee (ID,Пол,Телефон,ФИО,Отдел,Должность,Email,Пароль,Тип пользователя,Адрес,Зп) values (?,?,?,?,?,?,?,?,?,?,?)",
+                    cur.execute("Update employee set gender=?,phone=?,fio=?,dob=?,doj=?,email=?,pass=?,utype=?,address=?,salary=? where ID=?",(
+                        self.var_gender.get(),
+                        self.var_contact.get(),
+
+                        self.var_name.get(),
+                        self.var_dob.get(),
+                        self.var_doj.get(),
+
+                        self.var_email.get(),
+                        self.var_pass.get(),
+                        self.var_utype.get(),
+
+                        self.txt_address.get('1.0', END),
+                        self.var_salary.get(),
+                        self.var_emp_id.get(),
+                    ))
+                    con.commit()
+                    messagebox.showinfo("Успешно", "Данные сотрудника успешно обновлены", parent=self.root)
+                    self.show()
         except Exception as ex:
             messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
 
