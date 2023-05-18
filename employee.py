@@ -108,8 +108,8 @@ class employeeClass:
 
         scrollx.pack(side=BOTTOM, fill=X)
         scrolly.pack(side=RIGHT, fill=Y)
-        scrollx.config(command=self.EmployeeTable.xview())
-        scrolly.config(command=self.EmployeeTable.yview())
+        scrollx.config(command=self.EmployeeTable.xview)
+        scrolly.config(command=self.EmployeeTable.yview)
         self.EmployeeTable.heading("ID", text="ID")
         self.EmployeeTable.heading("Пол", text="Пол")
         self.EmployeeTable.heading("Телефон", text="Телефон")
@@ -124,9 +124,19 @@ class employeeClass:
 
         self.EmployeeTable["show"] = "headings"
 
-        self.EmployeeTable.column("ID", width=30)
+        self.EmployeeTable.column("ID", width=15)
+        self.EmployeeTable.column("Пол", width=15)
+        self.EmployeeTable.column("Телефон", width=100)
+        self.EmployeeTable.column("ФИО", width=250)
+        self.EmployeeTable.column("Отдел", width=200)
+        self.EmployeeTable.column("Должность", width=150)
+        self.EmployeeTable.column("Email", width=150)
+        self.EmployeeTable.column("Пароль", width=150)
+        self.EmployeeTable.column("Адрес", width=300)
+        self.EmployeeTable.column("Зп", width=130)
 
         self.EmployeeTable.pack(fill=BOTH, expand=1)
+        self.show()
 
 #==========================================================
 
@@ -163,6 +173,20 @@ class employeeClass:
                                 ))
                     con.commit()
                     messagebox.showinfo("Успешно", "Сотрудник был успешно добавлен в базу",parent=self.root)
+                    self.show()
+        except Exception as ex:
+            messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
+
+
+    def show(self):
+        con = sqlite3.connect(database=r"diplom_project.db")
+        cur = con.cursor()
+        try:
+            cur.execute("select * from employee")
+            rows=cur.fetchall()
+            self.EmployeeTable.delete(*self.EmployeeTable.get_children())
+            for row in rows:
+                self.EmployeeTable.insert('',END,values=row)
         except Exception as ex:
             messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
 
