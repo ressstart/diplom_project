@@ -11,7 +11,7 @@ class employeeClass:
         self.root.focus_force()
         #=====================
 
-        #all variables
+        #all variables)
         self.var_searchby = StringVar()
         self.var_searchtxt = StringVar()
 
@@ -32,12 +32,12 @@ class employeeClass:
         SearchFrame.place(x=250,y=20,width=600,height=70)
 
         #===options===
-        cmb_search=ttk.Combobox(SearchFrame,textvariable=self.var_searchby,values=("Выбрать", "ФИО", "Email", "Телефон"),state='readonly',justify=CENTER)
-        cmb_search.place(x=10,y=10,width=180)
+        cmb_search=ttk.Combobox(SearchFrame, textvariable=self.var_searchby,values=("Выбрать", "ФИО", "Email", "Телефон"), state='readonly', justify=CENTER)
+        cmb_search.place(x=10, y=10, width=180)
         cmb_search.current(0)
 
-        txt_search = Entry(SearchFrame, textvariable=self.var_searchtxt,font=("Verdana",15),bg="#fae6b4").place(x=200,y=8, width=200)
-        btn_search = Button(SearchFrame, text = "Поиск", bg="#4caf50",cursor="hand2").place(x=410, y=7, width=150, height=30)
+        txt_search = Entry(SearchFrame, textvariable=self.var_searchtxt, font=("Verdana", 10),bg="#fae6b4").place(x=200,y=8, width=200)
+        btn_search = Button(SearchFrame, command=self.search,text = "Поиск", bg="#4caf50",cursor="hand2").place(x=410, y=7, width=150, height=30)
 
         #===title===
         title = Label(self.root,text="Данные о сотруднике",bg="grey",fg="white").place(x=50, y=100, width=1000)
@@ -92,14 +92,14 @@ class employeeClass:
         #===button===
         btn_add = Button(self.root, text="Сохранить", command=self.add, bg="#2196f3", fg= "white", cursor="hand2").place(x=500, y=305, width=90, height=28)
         btn_update = Button(self.root, text="Обновить", command=self.update, bg="#4caf50", fg= "white", cursor="hand2").place(x=610, y=305, width=90, height=28)
-        btn_delete = Button(self.root, text="Удалить все", bg="#f44336", fg= "white", cursor="hand2").place(x=720, y=305, width=90, height=28)
-        btn_clear = Button(self.root, text="Очистить", bg="#607d8b", fg= "white", cursor="hand2").place(x=830, y=305, width=90, height=28)
+        btn_delete = Button(self.root, text="Удалить карточку", command=self.delete, bg="#f44336", fg= "white", cursor="hand2").place(x=720, y=305, width=115, height=28)
+        btn_clear = Button(self.root, text="Очистить", command=self.clear, bg="#607d8b", fg= "white", cursor="hand2").place(x=855, y=305, width=90, height=28)
 
         #===employee details===
 
-        emp_frames=Frame(self.root,bd=3)
-        emp_frames.place(x=0,y=350,relwidth=1, height=150)
-        scrolly = Scrollbar(emp_frames,orient=VERTICAL)
+        emp_frames=Frame(self.root, bd=3)
+        emp_frames.place(x=0, y=350, relwidth=1, height=150)
+        scrolly = Scrollbar(emp_frames, orient=VERTICAL)
         scrollx = Scrollbar(emp_frames, orient=HORIZONTAL)
 
         self.EmployeeTable = ttk.Treeview(emp_frames, columns=(
@@ -244,6 +244,63 @@ class employeeClass:
                     con.commit()
                     messagebox.showinfo("Успешно", "Данные сотрудника успешно обновлены", parent=self.root)
                     self.show()
+        except Exception as ex:
+            messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
+
+    def delete(self):
+        con = sqlite3.connect(database=r"diplom_project.db")
+        cur = con.cursor()
+        try:
+            if self.var_emp_id.get() == "":
+                messagebox.showerror("Error", "ID сотрудника должно быть заполнено", parent=self.root)
+            else:
+                cur.execute("SELECT * FROM employee WHERE ID=?", (self.var_emp_id.get(),))
+                row=cur.fetchone()
+                if row == None:
+                    messagebox.showerror("Error", "Неккоректный ID", parent=self.root)
+                else:
+                    op=messagebox.askyesno("Подтверждение", "Вы действительно хотите удалить карточку сотрудника?", parent=self.root)
+                    if op==True:
+                        cur.execute("delete from employee where id=?",(self.var_emp_id.get(),))
+                        con.commit()
+                        messagebox.showinfo("Удалить", "Карточка сотрудника успешно удалена", parent=self.root)
+                        self.clear()
+        except Exception as ex:
+            messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
+
+    def clear(self):
+        self.var_emp_id.set("")
+        self.var_gender.set("Выбрать")
+        self.var_contact.set("")
+        self.var_name.set("")
+
+        self.var_dob.set("Выбрать")
+        self.var_doj.set("")
+
+        self.var_email.set("")
+        self.var_pass.set("")
+        self.var_utype.set("Сотрудник")
+        self.txt_address.delete('1.0', END)
+        self.var_salary.set("")
+        self.show()
+
+    def search(self):
+        con = sqlite3.connect(database=r"diplom_project.db")
+        cur = con.cursor()
+        try:
+            if self.var_searchby.get=="Выбрать":
+                messagebox.showerror("Ошибка", "Не выбран критерий поиска", parent=self.root)
+            elif self.var_searchtxt.get()=="":
+                messagebox.showerror("Ошибка", "Задана пустая строка, введите значение",  parent=self.root)
+            else:
+                cur.execute("select * from employee where " + self.var_searchby.get() + " LIKE '%" + self.var_searchtxt.get() + "%'")
+                rows = cur.fetchall()
+                if len(rows)!=0:
+                    self.EmployeeTable.delete(*self.EmployeeTable.get_children())
+                    for row in rows:
+                        self.EmployeeTable.insert('', END, values=row)
+                else:
+                    messagebox.showerror("Ошибка", "Ничего не найдено",  parent=self.root)
         except Exception as ex:
             messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
 
