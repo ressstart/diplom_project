@@ -1,6 +1,8 @@
 from tkinter import *
 from PIL import Image, ImageTk
 from employee import employeeClass
+from supplier import  supplierClass
+from category import  categoryClass
 class IMS:
     def __init__(self,root):
         self.root = root
@@ -25,11 +27,10 @@ class IMS:
         lbl_menuLogo.pack(side=TOP,fill=X)
 
         lbl_menu = Label(LeftMenu, text="Меню", font=("Verdana", 13, "bold"), bg="#fae6b4", fg="#694717").pack(side=TOP,fill=X)
-        btn_category = Button(LeftMenu, text="Услуги", font=("Verdana", 13), bg="white", fg="#694717", bd=3,
-                              cursor="hand2", height=4).pack(side=TOP, fill=X)
-        btn_emoloyee = Button(LeftMenu, text="Сотрудники", command=self.employee,font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
-        #prijects instead of suplieers
-        btn_projects = Button(LeftMenu, text="Проекты", font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
+        btn_emoloyee = Button(LeftMenu, text="Сотрудники", command=self.employee,font=("Verdana", 13), bg="white", fg="#694717",bd=3, cursor="hand2", height=4).pack(side=TOP,fill=X)
+        btn_supplier = Button(LeftMenu, text="Поставщики", command=self.supplier, font=("Verdana", 13), bg="white", fg="#694717", bd=3, cursor="hand2", height=4).pack(side=TOP, fill=X)
+        #projects instead of suplieers
+        btn_category = Button(LeftMenu, text="Категории", command=self.category, font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
         btn_sales = Button(LeftMenu, text="Скидки", font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
         btn_exit = Button(LeftMenu, text="Выйти", font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
 
@@ -56,8 +57,15 @@ class IMS:
 #===============================================
 
     def employee(self):
-        self.new_win=Toplevel(self.root)
-        self.new_obj=employeeClass(self.new_win)
+        self.new_win = Toplevel(self.root)
+        self.new_obj = employeeClass(self.new_win)
+
+    def supplier(self):
+        self.new_win = Toplevel(self.root)
+        self.new_obj = supplierClass(self.new_win)
+    def category(self):
+        self.new_win = Toplevel(self.root)
+        self.new_obj = categoryClass(self.new_win)
 
 if __name__=="__main__":
     root=Tk()
