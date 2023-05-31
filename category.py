@@ -22,7 +22,7 @@ class categoryClass:
 
         lbl_name = Entry(self.root, textvariable=self.var_name, bg="lightyellow",font=("Verdana", 12)).place(x=50, y=150, width=300)
         btn_add = Button(self.root, text="Добавить", command=self.add,bg="#4caf50",fg="white",cursor="hand2").place(x=360, y=150, height=30,width=150)
-        btn_delete = Button(self.root, text="Удалить", bg="red",fg="white",cursor="hand2").place(x=520, y=150, height=30,width=150)
+        btn_delete = Button(self.root, text="Удалить", command=self.delete,bg="red",fg="white",cursor="hand2").place(x=520, y=150, height=30,width=150)
 
         # ===employee details===
 
