@@ -11,7 +11,7 @@ class employeeClass:
         self.root.focus_force()
         #=====================
 
-        #all variables)
+        #all variables
         self.var_searchby = StringVar()
         self.var_searchtxt = StringVar()
 
@@ -28,7 +28,7 @@ class employeeClass:
         self.var_salary = StringVar()
 
         #===search_frame===
-        SearchFrame=LabelFrame(self.root, text="Поиск по сотрудникам", bg="white")
+        SearchFrame=LabelFrame(self.root, text="Поиск по сотрудникам", bg="white", fg="white")
         SearchFrame.place(x=250, y=20, width=600, height=70)
 
         #===options===
@@ -288,32 +288,12 @@ class employeeClass:
     def search(self):
         con = sqlite3.connect(database=r"diplom_project.db")
         cur = con.cursor()
-
-        '''if self.var_searchby.get() == "ФИО":
-            self.var_searchtxt.set = "fio"
-        elif self.var_searchby.get() == "Телефон":
-            self.var_searchtxt.set = "phone"'''
-
         try:
             if self.var_searchby.get=="Выбрать":
                 messagebox.showerror("Ошибка", "Не выбран критерий поиска", parent=self.root)
             elif self.var_searchtxt.get()=="":
                 messagebox.showerror("Ошибка", "Задана пустая строка, введите значение",  parent=self.root)
             else:
-                '''if self.var_searchby.get() == "ФИО":
-                    self.var_searchby.set = "fio"
-                elif self.var_searchby.get() == "Телефон":
-                    self.var_searchby.set = "phone"
-                    print(self.var_searchby)
-                cur.execute(
-                    "select * from employee where " + self.var_searchby.get() + " LIKE '%" + self.var_searchtxt.get() + "%'")
-                rows = cur.fetchall()
-                if len(rows) != 0:
-                    self.EmployeeTable.delete(*self.EmployeeTable.get_children())
-                    for row in rows:
-                        self.EmployeeTable.insert('', END, values=row)
-                else:
-                    messagebox.showerror("Ошибка", "Ничего не найдено", parent=self.root)'''
                 if self.var_searchby.get() == "Телефон":
                     cur.execute(
                         "select * from employee where phone LIKE '%" + self.var_searchtxt.get() + "%'")
@@ -332,6 +312,6 @@ class employeeClass:
             print(str(self.var_searchby.get()))
 
 if __name__=="__main__":
-    root=Tk()
-    obj=employeeClass(root)
+    root = Tk()
+    obj = employeeClass(root)
     root.mainloop()

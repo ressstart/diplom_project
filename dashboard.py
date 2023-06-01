@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 from employee import employeeClass
 from supplier import  supplierClass
 from category import  categoryClass
+from product import productClass
 class IMS:
     def __init__(self,root):
         self.root = root
@@ -31,8 +32,8 @@ class IMS:
         btn_supplier = Button(LeftMenu, text="Поставщики", command=self.supplier, font=("Verdana", 13), bg="white", fg="#694717", bd=3, cursor="hand2", height=4).pack(side=TOP, fill=X)
         #projects instead of suplieers
         btn_category = Button(LeftMenu, text="Категории", command=self.category, font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
-        btn_sales = Button(LeftMenu, text="Скидки", font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
-        btn_exit = Button(LeftMenu, text="Выйти", font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
+        btn_product = Button(LeftMenu, text="Товары", command=self.product, font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
+        btn_sales = Button(LeftMenu, text="Продажи", font=("Verdana", 13), bg="white", fg="#694717",bd=3,cursor="hand2", height=4).pack(side=TOP,fill=X)
 
         #===content===
         self.lbl_employee = Label(self.root, text="Все сотрудники\n[ 0 ]", bd=5, bg="#694717",fg="white", font=("Lineyka Regular", 20))
@@ -66,6 +67,10 @@ class IMS:
     def category(self):
         self.new_win = Toplevel(self.root)
         self.new_obj = categoryClass(self.new_win)
+
+    def product(self):
+        self.new_win = Toplevel(self.root)
+        self.new_obj = productClass(self.new_win)
 
 if __name__=="__main__":
     root=Tk()
