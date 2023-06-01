@@ -48,7 +48,7 @@ class productClass:
 
         cmb_sup = ttk.Combobox(product_Frame, textvariable=self.var_sup, values=self.sup_list, state='readonly',justify=CENTER)
         cmb_sup.place(x=150, y=113, width=200)
-        #cmb_sup.current(0)
+        cmb_sup.current(0)
 
         txt_name = Entry(product_Frame, textvariable=self.var_name).place(x=150, y=163, width=200)
         txt_price = Entry(product_Frame, textvariable=self.var_price).place(x=150, y=213, width=200)
@@ -67,20 +67,20 @@ class productClass:
 
         #==========search_frame=================
         SearchFrame = LabelFrame(self.root, text="Поиск по сотрудникам", bg="white", font=("Calibri",12,"bold"))
-        SearchFrame.place(x=480, y=10, width=600, height=80)
+        SearchFrame.place(x=480, y=10, width=630, height=80)
 
         #=====================options=======================
         cmb_search = ttk.Combobox(SearchFrame, textvariable=self.var_searchby,values=("Выбрать", "Категория", "Поставщик", "Название"), state='readonly', justify=CENTER)
         cmb_search.place(x=10, y=10, width=180)
         cmb_search.current(0)
 
-        txt_search = Entry(SearchFrame, textvariable=self.var_searchtxt, font=("Verdana", 10), bg="#fae6b4").place(x=200, y=8, width=200)
+        txt_search = Entry(SearchFrame, textvariable=self.var_searchtxt, font=("Verdana", 10), bg="#fae6b4").place(x=200, y=11, width=200)
         btn_search = Button(SearchFrame, command=self.search, text="Поиск", bg="#4caf50", fg="white", cursor="hand2").place(x=410, y=7, width=150, height=30)
 
         #================product details===================
 
         p_frame = Frame(self.root, bd=3)
-        p_frame.place(x=480, y=100, width=600, height=390)
+        p_frame.place(x=480, y=100, width=630, height=390)
         scrolly = Scrollbar(p_frame, orient=VERTICAL)
         scrollx = Scrollbar(p_frame, orient=HORIZONTAL)
 
@@ -102,9 +102,9 @@ class productClass:
         self.product_table["show"] = "headings"
 
         self.product_table.column("pID", width=50)
-        self.product_table.column("Категория", width=150)
+        self.product_table.column("Категория", width=200)
         self.product_table.column("Поставщик", width=200)
-        self.product_table.column("Название", width=200)
+        self.product_table.column("Название", width=220)
         self.product_table.column("Цена", width=100)
         self.product_table.column("Количество", width=100)
         self.product_table.column("Статус", width=100)
@@ -117,12 +117,13 @@ class productClass:
     #==========================================================
 
     def fetch_cat_sup(self):
+        self.cat_list.append("Пусто")
+        self.sup_list.append("Пусто")
         con = sqlite3.connect(database=r"diplom_project.db")
         cur = con.cursor()
         try:
             cur.execute("SELECT name FROM category")
             cat=cur.fetchall()
-            self.cat_list.append("Пусто")
             if len(cat) > 0:
                 del self.cat_list[:]
                 self.cat_list.append("Выбрать")
@@ -131,17 +132,21 @@ class productClass:
 
             cur.execute("SELECT name FROM supplier")
             sup = cur.fetchall()
-            print(sup)
-
+            if len(sup)>0:
+                del self.sup_list[:]
+                self.sup_list.append("Выбрать")
+                for i in sup:
+                    self.sup_list.append(i[0])
 
         except Exception as ex:
             messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
+
 
     def add(self):
         con = sqlite3.connect(database=r"diplom_project.db")
         cur = con.cursor()
         try:
-            if self.var_cat.get() == "Выбрать" or self.var_sup.get()=="Выбрать" or self.var_name.get()=="":
+            if self.var_cat.get() == "Выбрать" or self.var_cat.get()=="Пусто" or self.var_sup.get() == "Выбрать" or self.var_name.get()=="":
                 messagebox.showerror("Error", "Все поля должны быть заполнены", parent=self.root)
             else:
                 cur.execute("SELECT * FROM product WHERE name=?", (self.var_name.get(),))
@@ -156,6 +161,7 @@ class productClass:
                         self.var_name.get(),
                         self.var_price.get(),
                         self.var_qty.get(),
+                        self.var_status.get(),
                     ))
                     con.commit()
                     messagebox.showinfo("Успешно", "Товар успешно добавлен в базу",parent=self.root)
