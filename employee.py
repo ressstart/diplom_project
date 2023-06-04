@@ -28,7 +28,7 @@ class employeeClass:
         self.var_salary = StringVar()
 
         #===search_frame===
-        SearchFrame=LabelFrame(self.root, text="Поиск по сотрудникам", bg="white", fg="white")
+        SearchFrame=LabelFrame(self.root, text="Поиск по сотрудникам", bg="white", fg="black")
         SearchFrame.place(x=250, y=20, width=600, height=70)
 
         #===options===
@@ -283,6 +283,9 @@ class employeeClass:
         self.var_utype.set("Сотрудник")
         self.txt_address.delete('1.0', END)
         self.var_salary.set("")
+
+        self.var_searchtxt.set("")
+        self.var_searchby.set("Выбрать")
         self.show()
 
     def search(self):

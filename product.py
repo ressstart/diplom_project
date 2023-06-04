@@ -10,6 +10,7 @@ class productClass:
         self.root.focus_force()
 
         #=====================
+        self.var_pid=StringVar()
         self.var_cat=StringVar()
         self.cat_list=[]
         self.var_sup=StringVar()
@@ -60,10 +61,10 @@ class productClass:
         cmb_status.current(0)
 
         #==================button===================
-        btn_add = Button(product_Frame, text="Сохранить",command=self.add, bg="#2196f3", fg="white", cursor="hand2").place(x=10, y=405, width=100, height=28)
-        btn_update = Button(product_Frame, text="Обновить", bg="#4caf50", fg="white", cursor="hand2").place(x=120, y=405, width=100, height=28)
-        btn_delete = Button(product_Frame, text="Удалить карточку", bg="#f44336", fg="white", cursor="hand2").place(x=230, y=405, width=130, height=28)
-        btn_clear = Button(product_Frame, text="Очистить", bg="#607d8b", fg="white", cursor="hand2").place(x=370, y=405, width=70, height=28)
+        btn_add = Button(product_Frame, text="Сохранить", command=self.add, bg="#2196f3", fg="white", cursor="hand2").place(x=10, y=405, width=100, height=28)
+        btn_update = Button(product_Frame, text="Обновить", command=self.update, bg="#4caf50", fg="white", cursor="hand2").place(x=120, y=405, width=100, height=28)
+        btn_delete = Button(product_Frame, text="Удалить карточку", command=self.delete, bg="#f44336", fg="white", cursor="hand2").place(x=230, y=405, width=130, height=28)
+        btn_clear = Button(product_Frame, text="Очистить", command=self.clear, bg="#607d8b", fg="white", cursor="hand2").place(x=370, y=405, width=70, height=28)
 
         #==========search_frame=================
         SearchFrame = LabelFrame(self.root, text="Поиск по сотрудникам", bg="white", font=("Calibri",12,"bold"))
@@ -187,52 +188,40 @@ class productClass:
         content=(self.product_table.item(f))
         row=content['values']
         #print(row)
-        self.var_emp_id.set(row[0])
-        self.var_gender.set(row[1])
-        self.var_contact.set(row[2])
-        self.var_name.set(row[3])
 
-        self.var_dob.set(row[4])
-        self.var_doj.set(row[5])
+        self.var_pid.set(row[0]),
+        self.var_cat.set(row[1]),
+        self.var_sup.set(row[2]),
+        self.var_name.set(row[3]),
+        self.var_price.set(row[4]),
+        self.var_qty.set(row[5]),
+        self.var_status.set(row[6])
 
-        self.var_email.set(row[6])
-        self.var_pass.set(row[7])
-        self.var_utype.set(row[8])
-        self.txt_address.delete('1.0', END)
-        self.txt_address.insert(END, row[9])
-        self.var_salary.set(row[10])
 
     def update(self):
         con = sqlite3.connect(database=r"diplom_project.db")
         cur = con.cursor()
         try:
-            if self.var_emp_id.get() == "":
-                messagebox.showerror("Error", "ID сотрудника должно быть заполнено", parent=self.root)
+            if self.var_pid.get() == "":
+                messagebox.showerror("Error", "Выберите товар из списка", parent=self.root)
             else:
-                cur.execute("SELECT * FROM employee WHERE ID=?", (self.var_emp_id.get(),))
+                cur.execute("SELECT * FROM product WHERE pid=?", (self.var_pid.get(),))
                 row=cur.fetchone()
                 if row == None:
-                    messagebox.showerror("Error", "Неккоректный ID", parent=self.root)
+                    messagebox.showerror("Error", "Неккоректный товар", parent=self.root)
                 else:
                     #cur.execute("Insert into employee (ID,Пол,Телефон,ФИО,Отдел,Должность,Email,Пароль,Тип пользователя,Адрес,Зп) values (?,?,?,?,?,?,?,?,?,?,?)",
-                    cur.execute("Update employee set gender=?,phone=?,fio=?,dob=?,doj=?,email=?,pass=?,utype=?,address=?,salary=? where ID=?",(
-                        self.var_gender.get(),
-                        self.var_contact.get(),
-
+                    cur.execute("Update product set Category=?,Supplier=?,name=?,price=?,qty=?,status=? where pid=?",(
+                        self.var_cat.get(),
+                        self.var_sup.get(),
                         self.var_name.get(),
-                        self.var_dob.get(),
-                        self.var_doj.get(),
-
-                        self.var_email.get(),
-                        self.var_pass.get(),
-                        self.var_utype.get(),
-
-                        self.txt_address.get('1.0', END),
-                        self.var_salary.get(),
-                        self.var_emp_id.get(),
+                        self.var_price.get(),
+                        self.var_qty.get(),
+                        self.var_status.get(),
+                        self.var_pid.get()
                     ))
                     con.commit()
-                    messagebox.showinfo("Успешно", "Данные сотрудника успешно обновлены", parent=self.root)
+                    messagebox.showinfo("Успешно", "Данные успешно обновлены", parent=self.root)
                     self.show()
         except Exception as ex:
             messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
@@ -241,38 +230,34 @@ class productClass:
         con = sqlite3.connect(database=r"diplom_project.db")
         cur = con.cursor()
         try:
-            if self.var_emp_id.get() == "":
-                messagebox.showerror("Error", "ID сотрудника должно быть заполнено", parent=self.root)
+            if self.var_pid.get() == "":
+                messagebox.showerror("Ошибка", "Выберите товар из списка", parent=self.root)
             else:
-                cur.execute("SELECT * FROM employee WHERE ID=?", (self.var_emp_id.get(),))
+                cur.execute("SELECT * FROM product WHERE pid=?", (self.var_pid.get(),))
                 row=cur.fetchone()
                 if row == None:
-                    messagebox.showerror("Error", "Неккоректный ID", parent=self.root)
+                    messagebox.showerror("Ошибка", "Неккоректный ID", parent=self.root)
                 else:
-                    op=messagebox.askyesno("Подтверждение", "Вы действительно хотите удалить карточку сотрудника?", parent=self.root)
+                    op=messagebox.askyesno("Подтверждение", "Вы действительно хотите удалить товар из списка?", parent=self.root)
                     if op==True:
-                        cur.execute("delete from employee where id=?",(self.var_emp_id.get(),))
+                        cur.execute("delete from product where pid=?",(self.var_pid.get(),))
                         con.commit()
-                        messagebox.showinfo("Удалить", "Карточка сотрудника успешно удалена", parent=self.root)
+                        messagebox.showinfo("Удалить", "Карточка успешно удалена", parent=self.root)
                         self.clear()
         except Exception as ex:
             messagebox.showerror("Error", f"Ошибка с {str(ex)}", parent=self.root)
 
 
     def clear(self):
-        self.var_emp_id.set("")
-        self.var_gender.set("Выбрать")
-        self.var_contact.set("")
+        self.var_cat.set("Выбрать")
+        self.var_sup.set("Выбрать")
         self.var_name.set("")
-
-        self.var_dob.set("Выбрать")
-        self.var_doj.set("")
-
-        self.var_email.set("")
-        self.var_pass.set("")
-        self.var_utype.set("Сотрудник")
-        self.txt_address.delete('1.0', END)
-        self.var_salary.set("")
+        self.var_price.set("")
+        self.var_qty.set("")
+        self.var_status.set("Не активно")
+        self.var_pid.set("")
+        self.var_searchtxt.set("")
+        self.var_searchby.set("Выбрать")
         self.show()
 
     def search(self):
@@ -283,13 +268,15 @@ class productClass:
                 messagebox.showerror("Ошибка", "Не выбран критерий поиска", parent=self.root)
             elif self.var_searchtxt.get()=="":
                 messagebox.showerror("Ошибка", "Задана пустая строка, введите значение",  parent=self.root)
+
             else:
-                if self.var_searchby.get() == "Телефон":
-                    cur.execute(
-                        "select * from employee where phone LIKE '%" + self.var_searchtxt.get() + "%'")
-                elif self.var_searchby.get() == "ФИО":
-                    cur.execute(
-                        "select * from employee where fio LIKE '%" + self.var_searchtxt.get() + "%'")
+                #fio LIKE '%" + self.var_searchtxt.get() + "%'"
+                if self.var_searchby.get() == "Поставщик":
+                    cur.execute("select * from product where Supplier LIKE '%" + self.var_searchtxt.get() + "%'")
+                elif self.var_searchby.get() == "Категория":
+                    cur.execute("select * from product where Category LIKE '%" + self.var_searchtxt.get() + "%'")
+                elif self.var_searchby.get() == "Название":
+                    cur.execute("select * from product where name LIKE '%" + self.var_searchtxt.get() + "%'")
                 rows = cur.fetchall()
                 if len(rows)!=0:
                     self.product_table.delete(*self.product_table.get_children())

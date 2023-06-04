@@ -72,6 +72,7 @@ class supplierClass:
         scrolly.pack(side=RIGHT, fill=Y)
         scrollx.config(command=self.SupplierTable.xview)
         scrolly.config(command=self.SupplierTable.yview)
+
         self.SupplierTable.heading("счет-фактура", text="счет-фактура")
         self.SupplierTable.heading("ФИО", text="ФИО")
         self.SupplierTable.heading("Телефон", text="Телефон")
